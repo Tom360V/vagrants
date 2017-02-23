@@ -14,10 +14,13 @@ Vagrant.configure("2") do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "bento/ubuntu-16.10"
 
+  #Set Host name, Virtual Development Machine 1
+  config.vm.hostname = "VDM1"
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+  config.vm.box_check_update = false
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -65,8 +68,37 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
+    sudo -i
+	su
+
     apt-get update
-    apt-get install cmake
-    apt-get install build-essential
+
+    #Packages required for cmake
+    apt-get --yes install cmake
+    apt-get --yes install build-essential
+
+    #Eclipse
+    apt-get install --yes eclipse eclipse-cdt
+    apt-get install --yes gnome-themes-standard
+
+    # Graphical environment including X forwarding (xauth) and clipboard sync (autocutsel)
+    apt-get install -y slim xfce4 autocutsel xauth
+
+    # Install libs the cross compiler depends on
+    apt-get install lib32stdc++6 lib32ncurses5 lib32z1 -y
+
+    # Usefull tooling
+    apt-get install -y inotify-tools
+
+    # Development environment based on vim
+    apt-get install -y vim ctags
+
+    exit
+	exit
   SHELL
+
+  config.ssh.forward_x11 = true
+  config.ssh.forward_agent = true
+
+  config.vm.provision "file", source: "files/.bash_aliases", destination: ".bash_aliases"
 end
