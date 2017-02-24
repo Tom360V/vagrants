@@ -94,11 +94,12 @@ Vagrant.configure("2") do |config|
     apt-get install -y vim ctags
 
     exit
-	exit
+    exit
   SHELL
 
   config.ssh.forward_x11 = true
   config.ssh.forward_agent = true
 
   config.vm.provision "file", source: "files/.bash_aliases", destination: ".bash_aliases"
-end
+  config.vm.provision "file", source: "files/.bashrc", destination: ".bashrc"
+  end
